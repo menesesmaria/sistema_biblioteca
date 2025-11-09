@@ -5,7 +5,7 @@ from localizacao.models import Bairro, Cidade, Estado, Logradouro
 
 class Usuario(models.Model):
     idusuario = models.AutoField(db_column='idUsuario', primary_key=True)  # Field name made lowercase.
-    nome = models.IntegerField()
+    nome = models.CharField(max_length=30)
     datanascimento = models.DateField(db_column='dataNascimento')  # Field name made lowercase.
     cpf = models.IntegerField(db_comment='somente n·meros')
     telefone = models.IntegerField(db_comment='somente n·meros')
@@ -15,6 +15,9 @@ class Usuario(models.Model):
     idbairro = models.ForeignKey(Bairro, models.DO_NOTHING, db_column='idBairro')  # Field name made lowercase.
     idlogradouro = models.ForeignKey(Logradouro, models.DO_NOTHING, db_column='idLogradouro')  # Field name made lowercase.
     numero = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.nome} - CPF: {self.cpf}"
 
     class Meta:
         managed = False

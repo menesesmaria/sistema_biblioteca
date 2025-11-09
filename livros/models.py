@@ -15,6 +15,9 @@ class Editora(models.Model):
     idlogradouro = models.ForeignKey(Logradouro, models.DO_NOTHING, db_column='idLogradouro')  # Field name made lowercase.
     numero = models.IntegerField()
 
+    def __str__(self):
+        return f"{self.nome}"
+
     class Meta:
         managed = False
         db_table = 'editora'
@@ -32,6 +35,9 @@ class EntidadeProprietaria(models.Model):
     numero = models.IntegerField()
     email = models.CharField(max_length=30)
 
+    def __str__(self):
+        return f"{self.nome}"
+
     class Meta:
         managed = False
         db_table = 'entidade_proprietaria'
@@ -42,6 +48,9 @@ class Autor(models.Model):
     nomemeio = models.CharField(db_column='nomeMeio', max_length=30)  # Field name made lowercase.
     sobrenome = models.CharField(max_length=30)
 
+    def __str__(self):
+        return f"{self.nome}"
+
     class Meta:
         managed = False
         db_table = 'autor'
@@ -51,6 +60,9 @@ class GeneroObra(models.Model):
     nome = models.CharField(max_length=30)
     descricao = models.CharField(max_length=150)
 
+    def __str__(self):
+        return f"{self.nome}"
+
     class Meta:
         managed = False
         db_table = 'genero_obra'
@@ -59,6 +71,9 @@ class TipoObra(models.Model):
     idtipo = models.AutoField(db_column='idTipo', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(max_length=30)
     descricao = models.CharField(max_length=150)
+
+    def __str__(self):
+        return f"{self.nome}"
 
     class Meta:
         managed = False
@@ -76,6 +91,9 @@ class Livro(models.Model):
     isbn = models.IntegerField(db_comment='somente n·meors')
     idgenero = models.ForeignKey(GeneroObra, models.DO_NOTHING, db_column='idGenero')  # Field name made lowercase.
 
+    def __str__(self):
+        return f"{self.nome} - {self.idautor}"
+
     class Meta:
         managed = False
         db_table = 'livro'
@@ -85,6 +103,9 @@ class Exemplar(models.Model):
     idlivro = models.ForeignKey(Livro, models.DO_NOTHING, db_column='idLivro')  # Field name made lowercase.
     tombo = models.IntegerField()
     exemplar = models.CharField(max_length=12)
+
+    def __str__(self):
+        return f"{self.exemplar}"
 
     class Meta:
         managed = False
