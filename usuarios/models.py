@@ -1,7 +1,6 @@
 from django.db import models
 from localizacao.models import Bairro, Cidade, Estado, Logradouro
 
-
 # Create your models here.
 
 class Usuario(models.Model):

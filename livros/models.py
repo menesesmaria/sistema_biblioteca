@@ -1,5 +1,5 @@
 from django.db import models
-from localizacao.models import Bairro, Cidade
+from localizacao.models import Bairro, Cidade, Estado, Logradouro
 
 # Create your models here.
 
@@ -9,10 +9,10 @@ class Editora(models.Model):
     cnpj = models.IntegerField(db_comment='somente n·meros')
     telefone = models.IntegerField(db_comment='somente n·meros')
     email = models.CharField(max_length=30)
-    idestado = models.ForeignKey('Estado', models.DO_NOTHING, db_column='idEstado')  # Field name made lowercase.
+    idestado = models.ForeignKey(Estado, models.DO_NOTHING, db_column='idEstado')  # Field name made lowercase.
     idcidade = models.ForeignKey(Cidade, models.DO_NOTHING, db_column='idCidade')  # Field name made lowercase.
     idbairro = models.ForeignKey(Bairro, models.DO_NOTHING, db_column='idBairro')  # Field name made lowercase.
-    idlogradouro = models.ForeignKey('Logradouro', models.DO_NOTHING, db_column='idLogradouro')  # Field name made lowercase.
+    idlogradouro = models.ForeignKey(Logradouro, models.DO_NOTHING, db_column='idLogradouro')  # Field name made lowercase.
     numero = models.IntegerField()
 
     class Meta:
@@ -25,17 +25,16 @@ class EntidadeProprietaria(models.Model):
     nome = models.CharField(max_length=30)
     cnpj = models.IntegerField(db_comment='somente n·meros')
     telefone = models.IntegerField(db_comment='somente n·meros')
-    idestado = models.ForeignKey('Estado', models.DO_NOTHING, db_column='idEstado')  # Field name made lowercase.
+    idestado = models.ForeignKey(Estado, models.DO_NOTHING, db_column='idEstado')  # Field name made lowercase.
     idcidade = models.ForeignKey(Cidade, models.DO_NOTHING, db_column='idCidade')  # Field name made lowercase.
     idbairro = models.ForeignKey(Bairro, models.DO_NOTHING, db_column='idBairro')  # Field name made lowercase.
-    idlogradouro = models.ForeignKey('Logradouro', models.DO_NOTHING, db_column='idLogradouro')  # Field name made lowercase.
+    idlogradouro = models.ForeignKey(Logradouro, models.DO_NOTHING, db_column='idLogradouro')  # Field name made lowercase.
     numero = models.IntegerField()
     email = models.CharField(max_length=30)
 
     class Meta:
         managed = False
         db_table = 'entidade_proprietaria'
-
 
 class Autor(models.Model):
     idautor = models.AutoField(db_column='idAutor', primary_key=True)  # Field name made lowercase.
@@ -47,18 +46,6 @@ class Autor(models.Model):
         managed = False
         db_table = 'autor'
 
-
-class Exemplar(models.Model):
-    idexemplar = models.AutoField(db_column='idExemplar', primary_key=True)  # Field name made lowercase.
-    idlivro = models.ForeignKey('Livro', models.DO_NOTHING, db_column='idLivro')  # Field name made lowercase.
-    tombo = models.IntegerField()
-    exemplar = models.CharField(max_length=12)
-
-    class Meta:
-        managed = False
-        db_table = 'exemplar'
-
-
 class GeneroObra(models.Model):
     idgenero = models.AutoField(db_column='idGenero', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(max_length=30)
@@ -68,6 +55,14 @@ class GeneroObra(models.Model):
         managed = False
         db_table = 'genero_obra'
 
+class TipoObra(models.Model):
+    idtipo = models.AutoField(db_column='idTipo', primary_key=True)  # Field name made lowercase.
+    nome = models.CharField(max_length=30)
+    descricao = models.CharField(max_length=150)
+
+    class Meta:
+        managed = False
+        db_table = 'tipo_obra'
 
 class Livro(models.Model):
     idlivro = models.AutoField(db_column='idLivro', primary_key=True)  # Field name made lowercase.
@@ -75,7 +70,7 @@ class Livro(models.Model):
     volume = models.IntegerField()
     idautor = models.ForeignKey(Autor, models.DO_NOTHING, db_column='idAutor')  # Field name made lowercase.
     edicao = models.IntegerField()
-    idtipo = models.ForeignKey('TipoObra', models.DO_NOTHING, db_column='idTipo')  # Field name made lowercase.
+    idtipo = models.ForeignKey(TipoObra, models.DO_NOTHING, db_column='idTipo')  # Field name made lowercase.
     ideditora = models.ForeignKey(Editora, models.DO_NOTHING, db_column='idEditora')  # Field name made lowercase.
     identidade = models.ForeignKey(EntidadeProprietaria, models.DO_NOTHING, db_column='idEntidade')  # Field name made lowercase.
     isbn = models.IntegerField(db_comment='somente n·meors')
@@ -85,14 +80,15 @@ class Livro(models.Model):
         managed = False
         db_table = 'livro'
 
-
-class TipoObra(models.Model):
-    idtipo = models.AutoField(db_column='idTipo', primary_key=True)  # Field name made lowercase.
-    nome = models.CharField(max_length=30)
-    descricao = models.CharField(max_length=150)
+class Exemplar(models.Model):
+    idexemplar = models.AutoField(db_column='idExemplar', primary_key=True)  # Field name made lowercase.
+    idlivro = models.ForeignKey(Livro, models.DO_NOTHING, db_column='idLivro')  # Field name made lowercase.
+    tombo = models.IntegerField()
+    exemplar = models.CharField(max_length=12)
 
     class Meta:
         managed = False
-        db_table = 'tipo_obra'
+        db_table = 'exemplar'
+
 
 
