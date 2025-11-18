@@ -4,19 +4,24 @@ from localizacao.models import Bairro, Cidade, Estado, Logradouro
 # Create your models here.
 
 class Editora(models.Model):
-    ideditora = models.AutoField(db_column='idEditora', primary_key=True)  # Field name made lowercase.
-    nome = models.CharField(max_length=30)
-    cnpj = models.IntegerField(db_comment='somente n·meros')
-    telefone = models.IntegerField(db_comment='somente n·meros')
+    editora = models.CharField(max_length=150)
+    cnpj = models.CharField(max_length=14)
+    telefone = models.CharField(max_length=15, db_comment='somente n·meros')
     email = models.CharField(max_length=30)
-    idestado = models.ForeignKey(Estado, models.DO_NOTHING, db_column='idEstado')  # Field name made lowercase.
-    idcidade = models.ForeignKey(Cidade, models.DO_NOTHING, db_column='idCidade')  # Field name made lowercase.
-    idbairro = models.ForeignKey(Bairro, models.DO_NOTHING, db_column='idBairro')  # Field name made lowercase.
-    idlogradouro = models.ForeignKey(Logradouro, models.DO_NOTHING, db_column='idLogradouro')  # Field name made lowercase.
+    estado = models.ForeignKey(Estado, models.DO_NOTHING, db_column='estado')
+    cidade = ChainedForeignKey (
+        Cidade,
+        chained_field="idestado",
+        chained_model_field="idestado",
+        show_all=False,
+        auto_choose=True,
+        sort=True,
+        on_delete=models.DO_NOTHING,
+        db_column='cidade'
+    )
+    bairro = models.ForeignKey(Bairro, models.DO_NOTHING, db_column='bairro')
+    logradouro = models.ForeignKey(Logradouro, models.DO_NOTHING, db_column='logradouro')
     numero = models.IntegerField()
-
-    def __str__(self):
-        return f"{self.nome}"
 
     class Meta:
         managed = False
@@ -24,88 +29,65 @@ class Editora(models.Model):
         
 
 class EntidadeProprietaria(models.Model):
-    identidade = models.AutoField(db_column='idEntidade', primary_key=True)  # Field name made lowercase.
-    nome = models.CharField(max_length=30)
-    cnpj = models.IntegerField(db_comment='somente n·meros')
-    telefone = models.IntegerField(db_comment='somente n·meros')
-    idestado = models.ForeignKey(Estado, models.DO_NOTHING, db_column='idEstado')  # Field name made lowercase.
-    idcidade = models.ForeignKey(Cidade, models.DO_NOTHING, db_column='idCidade')  # Field name made lowercase.
-    idbairro = models.ForeignKey(Bairro, models.DO_NOTHING, db_column='idBairro')  # Field name made lowercase.
-    idlogradouro = models.ForeignKey(Logradouro, models.DO_NOTHING, db_column='idLogradouro')  # Field name made lowercase.
+    entidade = models.CharField(max_length=150)
+    cnpj = models.CharField(max_length=14)
+    telefone = models.CharField(max_length=15)
+    estado = models.ForeignKey(Estado, models.DO_NOTHING, db_column='estado')
+    cidade = models.ForeignKey(Cidade, models.DO_NOTHING, db_column='cidade')
+    bairro = models.ForeignKey(Bairro, models.DO_NOTHING, db_column='bairro')
+    logradouro = models.ForeignKey(Logradouro, models.DO_NOTHING, db_column='logradouro')
     numero = models.IntegerField()
     email = models.CharField(max_length=30)
-
-    def __str__(self):
-        return f"{self.nome}"
 
     class Meta:
         managed = False
         db_table = 'entidade_proprietaria'
 
 class Autor(models.Model):
-    idautor = models.AutoField(db_column='idAutor', primary_key=True)  # Field name made lowercase.
-    nome = models.CharField(max_length=30)
-    nomemeio = models.CharField(db_column='nomeMeio', max_length=30)  # Field name made lowercase.
-    sobrenome = models.CharField(max_length=30)
-
-    def __str__(self):
-        return f"{self.nome}"
+    nome = models.CharField(max_length=150)
+    nome_meio = models.CharField(max_length=150)
+    sobrenome = models.CharField(max_length=150)
 
     class Meta:
         managed = False
         db_table = 'autor'
 
 class GeneroObra(models.Model):
-    idgenero = models.AutoField(db_column='idGenero', primary_key=True)  # Field name made lowercase.
-    nome = models.CharField(max_length=30)
+    genero = models.CharField(max_length=150)
     descricao = models.CharField(max_length=150)
-
-    def __str__(self):
-        return f"{self.nome}"
 
     class Meta:
         managed = False
         db_table = 'genero_obra'
 
 class TipoObra(models.Model):
-    idtipo = models.AutoField(db_column='idTipo', primary_key=True)  # Field name made lowercase.
+    id_tipo = models.AutoField(primary_key=True)
     nome = models.CharField(max_length=30)
     descricao = models.CharField(max_length=150)
-
-    def __str__(self):
-        return f"{self.nome}"
 
     class Meta:
         managed = False
         db_table = 'tipo_obra'
 
 class Livro(models.Model):
-    idlivro = models.AutoField(db_column='idLivro', primary_key=True)  # Field name made lowercase.
-    nome = models.CharField(max_length=30)
+    livro = models.CharField(max_length=150)
     volume = models.IntegerField()
-    idautor = models.ForeignKey(Autor, models.DO_NOTHING, db_column='idAutor')  # Field name made lowercase.
+    autor = models.ForeignKey(Autor, models.DO_NOTHING, db_column='autor')
     edicao = models.IntegerField()
-    idtipo = models.ForeignKey(TipoObra, models.DO_NOTHING, db_column='idTipo')  # Field name made lowercase.
-    ideditora = models.ForeignKey(Editora, models.DO_NOTHING, db_column='idEditora')  # Field name made lowercase.
-    identidade = models.ForeignKey(EntidadeProprietaria, models.DO_NOTHING, db_column='idEntidade')  # Field name made lowercase.
-    isbn = models.IntegerField(db_comment='somente n·meors')
-    idgenero = models.ForeignKey(GeneroObra, models.DO_NOTHING, db_column='idGenero')  # Field name made lowercase.
-
-    def __str__(self):
-        return f"{self.nome} - {self.idautor}"
+    tipo = models.ForeignKey(TipoObra, models.DO_NOTHING, db_column='tipo')
+    editora = models.ForeignKey(Editora, models.DO_NOTHING, db_column='editora')
+    entidade = models.ForeignKey(EntidadeProprietaria, models.DO_NOTHING, db_column='entidade')
+    isbn = models.CharField(max_length=15)
+    genero = models.ForeignKey(GeneroObra, models.DO_NOTHING, db_column='genero')
 
     class Meta:
         managed = False
         db_table = 'livro'
 
 class Exemplar(models.Model):
-    idexemplar = models.AutoField(db_column='idExemplar', primary_key=True)  # Field name made lowercase.
-    idlivro = models.ForeignKey(Livro, models.DO_NOTHING, db_column='idLivro')  # Field name made lowercase.
+    livro = models.ForeignKey(Livro, models.DO_NOTHING, db_column='livro')
     tombo = models.IntegerField()
-    exemplar = models.CharField(max_length=12)
-
-    def __str__(self):
-        return f"{self.exemplar}"
+    exemplar = models.IntegerField()
 
     class Meta:
         managed = False
