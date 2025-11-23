@@ -20,7 +20,6 @@ class Emprestimo(models.Model):
         db_table = 'emprestimo'
 
     def clean(self):
-        """Impedir empréstimo duplicado."""
         if not self.pk:
             ja_emprestado = Emprestimo.objects.filter(
                 exemplar=self.exemplar,
@@ -54,7 +53,6 @@ class Emprestimo(models.Model):
 
     @property
     def atrasado(self):
-        """Retorna True se o empréstimo está atrasado."""
         hoje = date.today()
 
         if self.data_devolucao:
@@ -64,7 +62,6 @@ class Emprestimo(models.Model):
 
     @property
     def dias_atraso(self):
-        """Dias de atraso."""
         if not self.atrasado:
             return 0
 
@@ -73,5 +70,4 @@ class Emprestimo(models.Model):
 
     @property
     def valor_multa(self):
-        """Valor da multa calculada."""
         return self.dias_atraso * self.multa_por_dia
