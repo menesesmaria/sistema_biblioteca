@@ -8,7 +8,7 @@ class Usuario(models.Model):
     id_usuario = models.AutoField(primary_key=True)
     nome = models.CharField(max_length=30)
     data_nascimento = models.DateField()
-    cpf = models.CharField(max_length=30)
+    cpf = models.CharField(max_length=30, unique=True)
     telefone = models.CharField(max_length=30)
     email = models.CharField(max_length=30)
     estado = models.ForeignKey(Estado, models.DO_NOTHING, db_column='estado')

@@ -14,13 +14,27 @@ class Emprestimo(models.Model):
     status = models.CharField(max_length=30, default="Emprestado")
 
     multa_por_dia = 2  
+    multa_paga = models.BooleanField(default=False)
 
     class Meta:
         managed = False
         db_table = 'emprestimo'
 
     def clean(self):
+        # Bloquear novos empréstimos se houver multa não paga
         if not self.pk:
+            multas = Emprestimo.objects.filter(
+                usuario=self.usuario,
+                status="Atrasado",
+                multa_paga=False
+            ).exists()
+
+            if multas:
+                raise ValidationError(
+                    "Este usuário possui multas em atraso. É necessário pagar antes de realizar um novo empréstimo."
+                )
+
+            # Verificar se o exemplar já está emprestado
             ja_emprestado = Emprestimo.objects.filter(
                 exemplar=self.exemplar,
                 data_devolucao__isnull=True
@@ -30,6 +44,12 @@ class Emprestimo(models.Model):
                 raise ValidationError(
                     "Este exemplar já está emprestado e ainda não foi devolvido."
                 )
+
+        # Se a multa for marcada como paga, exigir data de devolução
+        if self.multa_paga and not self.data_devolucao:
+            raise ValidationError({
+                'data_devolucao': "É necessário informar a data de devolução para pagar a multa."
+            })
 
     def save(self, *args, **kwargs):
         if not self.data_devolucao_prevista:

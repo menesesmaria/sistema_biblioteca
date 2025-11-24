@@ -7,7 +7,7 @@ from smart_selects.db_fields import ChainedForeignKey
 
 class Editora(models.Model):
     editora = models.CharField(max_length=150)
-    cnpj = models.CharField(max_length=14)
+    cnpj = models.CharField(max_length=14, unique=True)
     telefone = models.CharField(max_length=15, db_comment='somente n·meros')
     email = models.CharField(max_length=30)
     estado = models.ForeignKey(Estado, models.DO_NOTHING, db_column='estado')
@@ -54,7 +54,7 @@ class Editora(models.Model):
 
 class EntidadeProprietaria(models.Model):
     entidade = models.CharField(max_length=150)
-    cnpj = models.CharField(max_length=14)
+    cnpj = models.CharField(max_length=14, unique=True)
     telefone = models.CharField(max_length=15)
     estado = models.ForeignKey(Estado, models.DO_NOTHING, db_column='estado')
     cidade = ChainedForeignKey(
@@ -151,8 +151,8 @@ class Livro(models.Model):
 
 class Exemplar(models.Model):
     livro = models.ForeignKey(Livro, models.DO_NOTHING, db_column='livro')
-    tombo = models.IntegerField()
-    exemplar = models.IntegerField()
+    tombo = models.IntegerField(unique=True)
+    exemplar = models.IntegerField(unique=True)
 
     class Meta:
         managed = False
